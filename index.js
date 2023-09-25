@@ -22,11 +22,9 @@ app.use("/transcribe", transcribeRoute);
 app.use("/mp4", transcribeMp4Route);
 app.use("/podcast", transcribePodcastRoute);
 
-app.use(express.static(path.join(__dirname, "./client/build/")));
-
 app.use("/transcript", transcriptRoute);
 app.use("/shownotes", showNotesRoute);
-app.use(express.static(path.join(__dirname, "./client/build")));
+app.use(express.static(path.join(__dirname, "./client/build/stastic")));
 
 app.get("*", function (_, res) {
   res.sendFile(
