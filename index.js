@@ -15,6 +15,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
 app.use(bodyParser.json());
 app.use(cors());
 app.use("/get", titleRoute);
@@ -24,8 +25,7 @@ app.use("/podcast", transcribePodcastRoute);
 
 app.use("/transcript", transcriptRoute);
 app.use("/shownotes", showNotesRoute);
-app.use(express.static(path.join(__dirname, "./client/build/stastic")));
-
+app.use(express.static(path.join(__dirname, "./client/build")));
 app.get("*", function (_, res) {
   res.sendFile(
     path.join(__dirname, "./client/build/index.html"),
