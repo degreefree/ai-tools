@@ -62,7 +62,7 @@ const FileUploadPodcast = ({
     const separatedTranscripts = splitTranscriptIntoParagraphs(transcript);
 
     setResultIsLoading(true);
-    await fetch("http://localhost:3000/promo", {
+    await fetch("/promo", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

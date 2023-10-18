@@ -27,7 +27,7 @@ const SocialMediaForm = ({
   }
 
   const getTags = async (data) => {
-    await fetch(`http://localhost:3000/get/tags/${data}`)
+    await fetch(`/get/tags/${data}`)
       .then((response) => response.json())
       .then((data) => {
         setTags(removeOuterQuotes(data.tags));
@@ -35,7 +35,7 @@ const SocialMediaForm = ({
       });
   };
   const getTitle = async (data) => {
-    await fetch(`http://localhost:3000/get/title/${data}`)
+    await fetch(`/get/title/${data}`)
       .then((response) => response.json())
       .then((data) => {
         setTitle(removeOuterQuotes(data.title));
@@ -43,7 +43,7 @@ const SocialMediaForm = ({
       });
   };
   const getCaption = async (data) => {
-    await fetch(`http://localhost:3000/get/description/${data}`)
+    await fetch(`/get/description/${data}`)
       .then((response) => response.json())
       .then((data) => {
         setCaption(removeOuterQuotes(data.description));

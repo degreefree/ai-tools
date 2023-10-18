@@ -64,7 +64,7 @@ const FileUploadShowNotes = ({
     const separatedTranscripts = splitTranscriptIntoParagraphs(transcript);
     console.log(separatedTranscripts);
     setResultIsLoading(true);
-    await fetch("http://localhost:3000/shownotes", {
+    await fetch("/shownotes", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
