@@ -40,7 +40,7 @@ function ShowNotesResults({
             <ul className="">
               {" "}
               {steps.steps.map((step) => (
-                <li> • {step}</li>
+                <li key={Math.random()}> • {step}</li>
               ))}
               <br />
             </ul>
@@ -50,7 +50,7 @@ function ShowNotesResults({
                 outerTimestamps.map((data) => {
                   const { topic, timestamp } = data;
                   return (
-                    <li>
+                    <li key={Math.random()}>
                       {" "}
                       {timestamp} - {topic}{" "}
                     </li>
@@ -67,7 +67,7 @@ function ShowNotesResults({
           <ul className="">
             {" "}
             {resources.resources.map((resource) => (
-              <li> • {resource}</li>
+              <li key={Math.random()}> • {resource}</li>
             ))}
             <li>
               {" "}

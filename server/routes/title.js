@@ -61,6 +61,7 @@ const getTags = async (data) => {
     });
   return generatedTags;
 };
+
 const openai = new OpenAIApi(configuration);
 router.use(cors());
 router.get("/title/:data", async (req, res) => {

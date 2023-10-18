@@ -9,6 +9,10 @@ const FileUploadPodcast = ({
   fileUploaded,
   setFileUploaded,
   setThumbnailHooks,
+  url,
+  setUrl,
+  epNumber,
+  setEpNumber,
 }) => {
   const [transcript, setTranscript] = useState({});
 
@@ -58,7 +62,7 @@ const FileUploadPodcast = ({
     const separatedTranscripts = splitTranscriptIntoParagraphs(transcript);
 
     setResultIsLoading(true);
-    await fetch("http://localhost:3000/transcript", {
+    await fetch("http://localhost:3000/promo", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -67,11 +71,13 @@ const FileUploadPodcast = ({
     })
       .then((result) => result.json())
       .then((data) => {
-        setTitle(JSON.parse(data[0]));
-        setDescription(JSON.parse(data[1]));
-        setTags(data[2]);
+        console.log(JSON.parse(data.hooks));
+        console.log(JSON.parse(data.titles));
+        console.log(data.tags);
+        setTitle(JSON.parse(data.titles)[0]);
+        setTags(data.tags);
+        setThumbnailHooks(JSON.parse(data.hooks)[0]);
         setResultIsLoading(false);
-        setThumbnailHooks(JSON.parse(data[3]));
         setFileUploaded(false);
       });
   };
@@ -93,6 +99,24 @@ const FileUploadPodcast = ({
             name="file"
             accept=".txt"
             onChange={handleFileChange}
+          />
+          <input
+            type="number"
+            id="episode-number"
+            className="text-black p-2"
+            placeholder="Episode number"
+            value={epNumber}
+            onChange={(e) => setEpNumber(e.target.value)}
+            required
+          />
+          <input
+            type="url"
+            id="url"
+            className="text-black p-2"
+            placeholder="Episode Link on Spotify"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            required
           />
 
           {fileUploaded && (

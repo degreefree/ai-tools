@@ -3,8 +3,9 @@ import titleRoute from "./server/routes/title.js";
 import transcribeRoute from "./server/routes/transcribe.js";
 import transcribeMp4Route from "./server/routes/transcribemp4.js";
 import transcribePodcastRoute from "./server/routes/podcast.js";
-import transcriptRoute from "./server/routes/transcript.js";
+import transcriptRoute from "./server/routes/pod.js";
 import showNotesRoute from "./server/routes/showNotes.js";
+import promoRoute from "./server/routes/promo.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import bodyParser from "body-parser";
@@ -22,8 +23,9 @@ app.use("/get", titleRoute);
 app.use("/transcribe", transcribeRoute);
 app.use("/mp4", transcribeMp4Route);
 app.use("/podcast", transcribePodcastRoute);
-
+app.use("/promo", promoRoute);
 app.use("/transcript", transcriptRoute);
+app.use("/shownotes", showNotesRoute);
 app.use("/shownotes", showNotesRoute);
 app.use(express.static(path.join(__dirname, "./client/build")));
 app.get("*", function (_, res) {

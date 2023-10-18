@@ -121,7 +121,7 @@ const getMinifiedSummary = async (summary) => {
       messages: [
         {
           role: "user",
-          content: `Rewrite this in 1 paragraph for the podcast show notes from this transcript summary. "${summary}? Write in short, concise sentences. Start wtih "In this podcast episode,...". Rewrite like a native american english speaker.
+          content: `Rewrite this in 3 paragraphs for the podcast show notes from this transcript summary. Maximum of 3 sentences for each paragraph. "${summary}? Write in very short and concise sentences. Start wtih "In this podcast episode,...". Rewrite like a native american english speaker.
 
           `,
         },

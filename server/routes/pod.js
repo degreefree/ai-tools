@@ -38,6 +38,7 @@ const getTitles = async (summary) => {
   let generatedDescription = {};
   let results = [];
   let generatedTags = "";
+  let generatedHooks = {};
   await openai
     .createChatCompletion({
       model: "gpt-3.5-turbo",
@@ -109,6 +110,24 @@ const getTitles = async (summary) => {
     .then((result) => {
       generatedTags = result.data.choices[0].message.content;
       results.push(generatedTags);
+    });
+
+  await openai
+    .createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "user",
+          content: `From these titles, generated a 3 - 5 words to be put on a Youtube Thumbnail graphic. Our content is about career tips, alternative education, learning skills and landing jobs without a degree. Make it extremely attention grabbing like how viral Youtubers make their thumbnails.  Send in an Array format.
+          "${generatedTitles}"
+          `,
+        },
+      ],
+    })
+    .then((result) => {
+      generatedHooks = result.data.choices[0].message.content;
+      console.log(generatedHooks);
+      results.push([generatedHooks]);
     });
   return results;
 };
