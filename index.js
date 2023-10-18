@@ -27,15 +27,15 @@ app.use("/promo", promoRoute);
 app.use("/transcript", transcriptRoute);
 app.use("/shownotes", showNotesRoute);
 app.use("/shownotes", showNotesRoute);
-app.use(express.static(path.join(__dirname, "./client/build")));
-app.get("*", function (_, res) {
-  res.sendFile(
-    path.join(__dirname, "./client/build/index.html"),
-    function (err) {
-      res.status(500).send(err);
-    }
-  );
-});
+app.use(express.static(path.join(__dirname, "./client/build/")));
+// app.get("*", function (_, res) {
+//   res.sendFile(
+//     path.join(__dirname, "./client/build/index.html"),
+//     function (err) {
+//       res.status(500).send(err);
+//     }
+//   );
+// });
 
 const PORT = process.env.PORT || 3000;
 
