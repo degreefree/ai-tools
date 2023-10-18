@@ -29,8 +29,7 @@ const summarizeTranscript = async (transcript) => {
         summary = summary + result.data.choices[0].message.content;
       });
   }
-  const titles = await getTitles(summary);
-  return titles;
+  return summary;
 };
 const getTags = async (summary) => {
   let generatedTags = "";
@@ -61,7 +60,7 @@ const getHooks = async (generatedTitles) => {
           content: `From these titles, generated a 3 - 5 words to be put on a Youtube Thumbnail graphic. Our content is about career tips, alternative education, learning skills and landing jobs without a degree. Make it extremely attention grabbing like how viral Youtubers make their thumbnails.  Send in JSON format.
         "${generatedTitles}"
 
-        And here's the corresponding JSON structure:
+        Use this EXACT JSON structure:
         
         [{
           "hooks": "["hook 1", "hook 2", "hook 3", ...]"
@@ -85,26 +84,16 @@ const getTitles = async (summary) => {
       messages: [
         {
           role: "user",
-          content: `Would you please send me 5 title ideas from a podcast summary in this JSON format:
+          content: `Would you please send me 5 attention grabbing titles just like how Joe Rogan does from a transcript in JSON format?
           
-          And here's the corresponding JSON structure:
+          Here's an example output in JSON format.
           
           [{
-            "titles": "["title 1", "title 2", "title 3", ...]"
+            "titles": "["Learning Beyond the Classroom: From Pool Tech to Tech Solutions Engineer with [Guest Name]", "Breaking into Code: How to Launch Your Software Engineering Career with No Experience with [Guest Name]", "Future-Proof Your Career: Positioning Yourself for Success in the AI Era with [Guest Name]", "Breaking Into Cybersecurity: The Power of Accidents & Saying Yes To Everything with [Guest Name]", "How To Get a $100,000+ IT Job with Bootcamps & Certifications with [Guest Name]", "How to Break into Marketing with No Degree or Experience with [Guest Name]"]"
           }]
 
-          Write the guest name at the end of the titles.
-          
-          Here are examples of our published titles, that you can use as reference. Please generate titles similar to this style. 
-          • Learning Beyond the Classroom: From Pool Tech to Tech Solutions Engineer with [Guest Name]
-          • Breaking into Code: How to Launch Your Software Engineering Career with No Experience with [Guest Name]
-          • Future-Proof Your Career: Positioning Yourself for Success in the AI Era with [Guest Name]
-          • Debunking ’Follow Your Passion’ as Career Advice, The Rise of Downcredentialing & Skill Based Hiring
-          • How to Break into Marketing with No Degree or Experience with [Guest Name]
-          • Unlock Opportunities in Operations - No Degree Needed! with [Guest Name]
-          • Level Up Your Career: Achieving Tech Success Without a Degree with [Guest Name]
-          • How To Get a $100,000+ IT Job with Bootcamps & Certifications with [Guest Name]
-          • Breaking Into Cybersecurity: The Power of Accidents & Saying Yes To Everything with [Guest Name]
+          Please send the output in the EXACT JSON format as above.
+        
           
           Here's the summary: 
           "${summary}"

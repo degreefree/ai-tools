@@ -1,4 +1,3 @@
-import { result } from "lodash";
 import React, { useState } from "react";
 
 const FileUploadShowNotes = ({
@@ -13,21 +12,25 @@ const FileUploadShowNotes = ({
   setSteps,
 }) => {
   const [transcript, setTranscript] = useState({});
-
   const handleFileChange = (event) => {
     event.preventDefault();
     const file = event.target.files[0];
-    setFile(file);
-    let reader = new FileReader();
-    reader.readAsText(file);
+    if (file) {
+      setFile(file);
+      let reader = new FileReader();
+      reader.readAsText(file);
 
-    reader.onload = function () {
-      const textFromFile = reader.result;
-      setTranscript(textFromFile);
-      setFileUploaded(true);
-    };
+      reader.onload = function () {
+        const textFromFile = reader.result;
+        setTranscript(textFromFile);
+        setFileUploaded(true);
+      };
+
+      reader.onerror = function (error) {
+        console.error("Error reading the file: ", error);
+      };
+    }
   };
-
   function splitTranscriptIntoParagraphs(transcript) {
     const paragraphs = [];
     const words = transcript.split(" ");
@@ -62,7 +65,6 @@ const FileUploadShowNotes = ({
   const readFile = async (event) => {
     event.preventDefault();
     const separatedTranscripts = splitTranscriptIntoParagraphs(transcript);
-    console.log(separatedTranscripts);
     setResultIsLoading(true);
     await fetch("/shownotes", {
       method: "POST",

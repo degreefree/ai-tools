@@ -9,21 +9,33 @@ const FileUploadPodcast = ({
   fileUploaded,
   setFileUploaded,
   setThumbnailHooks,
+  setEpNumber,
 }) => {
   const [transcript, setTranscript] = useState({});
-
+  function extractLastNumber(filename) {
+    const regex = /(\d+)\.txt$/;
+    const match = filename.match(regex);
+    if (match) {
+      return parseInt(match[1]);
+    } else {
+      return null;
+    }
+  }
   const handleFileChange = (event) => {
     event.preventDefault();
     const file = event.target.files[0];
-    setFile(file);
-    let reader = new FileReader();
-    reader.readAsText(file);
+    if (file) {
+      setFile(file);
+      let reader = new FileReader();
+      reader.readAsText(file);
 
-    reader.onload = function () {
-      const textFromFile = reader.result;
-      setTranscript(textFromFile);
-      setFileUploaded(true);
-    };
+      reader.onload = function () {
+        const textFromFile = reader.result;
+        setTranscript(textFromFile);
+        setEpNumber(extractLastNumber(file.name));
+        setFileUploaded(true);
+      };
+    }
   };
 
   const splitTranscriptIntoParagraphs = (transcript) => {
@@ -53,10 +65,11 @@ const FileUploadPodcast = ({
 
     return paragraphs;
   };
+
   const readFile = async (event) => {
     event.preventDefault();
     const separatedTranscripts = splitTranscriptIntoParagraphs(transcript);
-
+    setFileUploaded(false);
     setResultIsLoading(true);
     await fetch("/transcript", {
       method: "POST",
@@ -67,12 +80,15 @@ const FileUploadPodcast = ({
     })
       .then((result) => result.json())
       .then((data) => {
-        setTitle(JSON.parse(data[0]));
-        setDescription(JSON.parse(data[1]));
-        setTags(data[2]);
+        setTitle(JSON.parse(data.titles)[0]);
+        console.log(data.description);
+        console.log(data.tags);
+        setThumbnailHooks(JSON.parse(data.hooks)[0]);
+        setDescription(JSON.parse(data.description));
+
+        setTags(data.tags);
         setResultIsLoading(false);
-        setThumbnailHooks(JSON.parse(data[3]));
-        setFileUploaded(false);
+        setFileUploaded(true);
       });
   };
 

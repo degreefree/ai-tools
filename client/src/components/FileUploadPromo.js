@@ -19,15 +19,21 @@ const FileUploadPodcast = ({
   const handleFileChange = (event) => {
     event.preventDefault();
     const file = event.target.files[0];
-    setFile(file);
-    let reader = new FileReader();
-    reader.readAsText(file);
+    if (file) {
+      setFile(file);
+      let reader = new FileReader();
+      reader.readAsText(file);
 
-    reader.onload = function () {
-      const textFromFile = reader.result;
-      setTranscript(textFromFile);
-      setFileUploaded(true);
-    };
+      reader.onload = function () {
+        const textFromFile = reader.result;
+        setTranscript(textFromFile);
+        setFileUploaded(true);
+      };
+
+      reader.onerror = function (error) {
+        console.error("Error reading the file: ", error);
+      };
+    }
   };
 
   const splitTranscriptIntoParagraphs = (transcript) => {
@@ -60,6 +66,7 @@ const FileUploadPodcast = ({
   const readFile = async (event) => {
     event.preventDefault();
     const separatedTranscripts = splitTranscriptIntoParagraphs(transcript);
+    setFileUploaded(false);
 
     setResultIsLoading(true);
     await fetch("/promo", {
@@ -71,14 +78,11 @@ const FileUploadPodcast = ({
     })
       .then((result) => result.json())
       .then((data) => {
-        console.log(JSON.parse(data.hooks));
-        console.log(JSON.parse(data.titles));
-        console.log(data.tags);
         setTitle(JSON.parse(data.titles)[0]);
         setTags(data.tags);
         setThumbnailHooks(JSON.parse(data.hooks)[0]);
         setResultIsLoading(false);
-        setFileUploaded(false);
+        setFileUploaded(true);
       });
   };
 

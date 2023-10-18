@@ -24,7 +24,7 @@ function Highlight() {
           setEpNumber={setEpNumber}
           setTags={setTags}
         />
-        <div className="m-3"> --- OR --- </div>
+        <div className="m-3 text-center"> --- OR --- </div>
         <SocialMediaForm
           setCaption={setCaption}
           setTitle={setTitle}

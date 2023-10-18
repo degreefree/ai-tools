@@ -40,9 +40,14 @@ const FileUploadHighlight = ({
   const handleFileChange = (event) => {
     event.preventDefault();
     const file = event.target.files[0];
-    setFile(file);
-    setEpNumber(extractLastNumber(file.name));
+    if (file) {
+      setFile(file);
+      setEpNumber(extractLastNumber(file.name));
+      let reader = new FileReader();
+      reader.readAsText(file);
+    }
   };
+
   const load = async () => {
     const baseURL = "https://unpkg.com/@ffmpeg/core@0.12.1/dist/umd";
     const ffmpeg = ffmpegRef.current;
@@ -90,7 +95,7 @@ const FileUploadHighlight = ({
     >
       <label className="flex flex-col gap-2 p-5" id="dropcontainer">
         <span className="drop-title">Drop highlight here (.mp4)</span>
-        or
+        <span className="text-center">or </span>
         <input
           id="file-upload"
           type="file"

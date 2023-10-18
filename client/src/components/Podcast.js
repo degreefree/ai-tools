@@ -6,11 +6,9 @@ import AtomicSpinner from "atomic-spinner";
 
 function Podcast() {
   const [file, setFile] = useState(null);
-  const [title, setTitle] = useState([
-    "---------------",
-    "---------------",
-    "---------------",
-  ]);
+  const [title, setTitle] = useState({
+    titles: ["------", "-------", "-------"],
+  });
   const [description, setDescription] = useState({
     intro: "------------------",
     key_discussion_points: [
@@ -23,12 +21,11 @@ function Podcast() {
   const [fileUploaded, setFileUploaded] = useState(false);
   const [tags, setTags] = useState("------------------");
   const [resultIsLoading, setResultIsLoading] = useState(false);
-  const [thumbnailHooks, setThumbnailHooks] = useState([
-    "---------------",
-    "---------------",
-    "---------------",
-  ]);
+  const [thumbnailHooks, setThumbnailHooks] = useState({
+    hooks: ["------", "-------", "-------"],
+  });
 
+  const [epNumber, setEpNumber] = useState(32);
   return (
     <div>
       <FileUploadPodcast
@@ -41,6 +38,7 @@ function Podcast() {
         setFileUploaded={setFileUploaded}
         fileUploaded={fileUploaded}
         setThumbnailHooks={setThumbnailHooks}
+        setEpNumber={setEpNumber}
       />
 
       {!resultIsLoading ? (
@@ -49,6 +47,7 @@ function Podcast() {
           title={title}
           tags={tags}
           thumbnailHooks={thumbnailHooks}
+          epNumber={epNumber}
         />
       ) : (
         <div className="loader-container flex justify-center items-center">

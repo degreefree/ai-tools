@@ -94,12 +94,14 @@ const getResources = async (summary) => {
       messages: [
         {
           role: "user",
-          content: `From this transcript summary: "${summary}", would you please send me suggested reading, resources and studies from this summary in JSON format?
+          content: `From this transcript summary: "${summary}", would you please send me suggested reading, resources mentionedand studies from this summary in JSON format? 
           --------
           Send the result in the following JSON structure
+          "
           [{
             "resources": ["resource 1", "resource 2", "resource 3"]
           }]
+          "
           `,
         },
       ],

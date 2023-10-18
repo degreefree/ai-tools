@@ -3,6 +3,7 @@ import * as path from "path";
 import { Configuration, OpenAIApi } from "openai";
 import cors from "cors";
 import "dotenv/config";
+import { generate } from "rxjs";
 
 const router = express.Router();
 const configuration = new Configuration({
@@ -29,74 +30,10 @@ const summarizeTranscript = async (transcript) => {
         summary = summary + result.data.choices[0].message.content;
       });
   }
-  const titles = await getTitles(summary);
-  return titles;
+  return summary;
 };
-
-const getTitles = async (summary) => {
-  let generatedTitles = {};
-  let generatedDescription = {};
-  let results = [];
+const getTags = async (summary) => {
   let generatedTags = "";
-  let generatedHooks = {};
-  await openai
-    .createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "user",
-          content: `Would you please send me 5 title ideas from a podcast summary in array format? Each title should be a child of an array. Write the guest name at the end of the titles.
-          
-          Here are examples of our published titles, that you can use as reference. Please generate titles similar to this style. 
-          • Learning Beyond the Classroom: From Pool Tech to Tech Solutions Engineer with [Guest Name]
-          • Breaking into Code: How to Launch Your Software Engineering Career with No Experience with [Guest Name]
-          • Future-Proof Your Career: Positioning Yourself for Success in the AI Era with [Guest Name]
-          • Debunking ’Follow Your Passion’ as Career Advice, The Rise of Downcredentialing & Skill Based Hiring
-          • How to Break into Marketing with No Degree or Experience with [Guest Name]
-          • Unlock Opportunities in Operations - No Degree Needed! with [Guest Name]
-          • Level Up Your Career: Achieving Tech Success Without a Degree with [Guest Name]
-          • How To Get a $100,000+ IT Job with Bootcamps & Certifications with [Guest Name]
-          • Breaking Into Cybersecurity: The Power of Accidents & Saying Yes To Everything with [Guest Name]
-          
-          Here's the summary: 
-          "${summary}"
-          `,
-        },
-      ],
-    })
-    .then((result) => {
-      generatedTitles = result.data.choices[0].message.content;
-      console.log(generatedTitles);
-      results.push([generatedTitles]);
-    });
-  await openai
-    .createChatCompletion({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "user",
-          content: `Would you please send me a podcast description in JSON format from a podcast summary with intro, key discussion points and outro? Write like a native english speaker. The podcast name is 'Degree Free Podcast'. Make it short and concise. Here's the summary: "${summary}"
-          Here are examples that you can use as reference:
-          { 
-            "intro": "Join us for an insightful episode as we unravel the journey of Colton Sakamoto, co-founder and former CEO of Infection Points, and currently the Chief Party Officer at Office Party. In this jam-packed conversation, Colton takes us through his remarkable path to success, from humble beginnings to building thriving ventures.  Colton Sakamoto is the Chief Party Officer at The Office Party. Prior to The Office Party, he co-founded Inflection Points, an employment-focused company that helped 1,500+ job seekers start new careers.",
-            "key_discussion_points": ['How Colton started his entrepreneurial adventure from the comfort of his childhood bedroom, overcoming challenges and eventually selling his company, Inflection Points.', ' Valuable insights into the world of content creation and its synergies with entrepreneurship, as Colton shares his experiences transitioning from a content creator to co-founding Office Party.', 'The impact of Colton's decision to pursue an MBA on his career trajectory, with candid reflections if it really added value to his professional growth and decision-making.', 'Strategies and secrets behind building a loyal following and nurturing a thriving community for aspiring entrepreneurs and content creators.', 'A glimpse into Colton's visionary ideas for the future of Office Party, including innovative approaches to monetization and platform expansion.'],
-            "outro": "We dive deep into the nuances of entrepreneurship, content creation, and starting a business from scratch. Whether you're an experienced business owner or contemplating starting a side hustle, there's something valuable for everyone in this episode. Don't miss the chance to learn from Colton Sakamoto’s journey and insights to elevate your own path to success. Enjoy the episode!"
-          }
-          
-          --------
-          Send the result in the following JSON structure
-          { "intro": "..",
-            "key_discussion_points": [],
-            "outro": ".."}`,
-        },
-      ],
-    })
-    .then((result) => {
-      generatedDescription = result.data.choices[0].message.content;
-      console.log(generatedDescription);
-      results.push(generatedDescription);
-    });
-
   await openai
     .createChatCompletion({
       model: "gpt-3.5-turbo",
@@ -109,8 +46,38 @@ const getTitles = async (summary) => {
     })
     .then((result) => {
       generatedTags = result.data.choices[0].message.content;
-      results.push(generatedTags);
     });
+  return generatedTags;
+};
+
+const getHooks = async (generatedTitles) => {
+  let generatedHooks = {};
+  await openai
+    .createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "user",
+          content: `From these titles, generated a 3 - 5 words to be put on a Youtube Thumbnail graphic. Our content is about career tips, alternative education, learning skills and landing jobs without a degree. Make it extremely attention grabbing like how viral Youtubers make their thumbnails.  Send in JSON format.
+        "${generatedTitles}"
+
+        Use this EXACT JSON structure:
+        
+        [{
+          "hooks": "["hook 1", "hook 2", "hook 3", ...]"
+        }]`,
+        },
+      ],
+    })
+    .then((result) => {
+      generatedHooks = result.data.choices[0].message.content;
+      console.log(generatedHooks);
+    });
+  return generatedHooks;
+};
+
+const getTitles = async (summary) => {
+  let generatedTitles = {};
 
   await openai
     .createChatCompletion({
@@ -118,23 +85,83 @@ const getTitles = async (summary) => {
       messages: [
         {
           role: "user",
-          content: `From these titles, generated a 3 - 5 words to be put on a Youtube Thumbnail graphic. Our content is about career tips, alternative education, learning skills and landing jobs without a degree. Make it extremely attention grabbing like how viral Youtubers make their thumbnails.  Send in an Array format.
-          "${generatedTitles}"
-          `,
+          content: `Would you please send me 5 title ideas from a podcast summary?
+          
+          Here's an example output in JSON format:
+          "
+          [{
+            "titles": "["Learning Beyond the Classroom: From Pool Tech to Tech Solutions Engineer with [Guest Name]",
+             "Breaking into Code: How to Launch Your Software Engineering Career with No Experience with [Guest Name]",
+              "Future-Proof Your Career: Positioning Yourself for Success in the AI Era with [Guest Name]",
+              "Breaking Into Cybersecurity: The Power of Accidents & Saying Yes To Everything with [Guest Name]",
+              "How To Get a $100,000+ IT Job with Bootcamps & Certifications with [Guest Name]", 
+              How to Break into Marketing with No Degree or Experience with [Guest Name]"]"
+          }]
+          "
+
+          Please send the output in the EXACT JSON format as above.
+        
+          
+          Here's the summary: 
+          "${summary}"
+
+        `,
         },
       ],
     })
     .then((result) => {
-      generatedHooks = result.data.choices[0].message.content;
-      console.log(generatedHooks);
-      results.push([generatedHooks]);
+      generatedTitles = result.data.choices[0].message.content;
+      console.log(generatedTitles);
     });
-  return results;
+  return generatedTitles;
+};
+const getDescription = async (summary) => {
+  let generatedDescription = {};
+  let generatedHooks = {};
+
+  await openai
+    .createChatCompletion({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "user",
+          content: `Would you please send me a podcast description in JSON format from a podcast summary with intro, key discussion points and outro? Write like a native english speaker. The podcast name is 'Degree Free Podcast'. Make it short and concise. Here's the summary: "${summary}"
+          Here are examples that you can use as reference:
+          "
+          { 
+            "intro": "Join us for an insightful episode as we unravel the journey of Colton Sakamoto, co-founder and former CEO of Infection Points, and currently the Chief Party Officer at Office Party. In this jam-packed conversation, Colton takes us through his remarkable path to success, from humble beginnings to building thriving ventures.  Colton Sakamoto is the Chief Party Officer at The Office Party. Prior to The Office Party, he co-founded Inflection Points, an employment-focused company that helped 1,500+ job seekers start new careers.",
+            "key_discussion_points": ['How Colton started his entrepreneurial adventure from the comfort of his childhood bedroom, overcoming challenges and eventually selling his company, Inflection Points.', ' Valuable insights into the world of content creation and its synergies with entrepreneurship, as Colton shares his experiences transitioning from a content creator to co-founding Office Party.', 'The impact of Colton's decision to pursue an MBA on his career trajectory, with candid reflections if it really added value to his professional growth and decision-making.', 'Strategies and secrets behind building a loyal following and nurturing a thriving community for aspiring entrepreneurs and content creators.', 'A glimpse into Colton's visionary ideas for the future of Office Party, including innovative approaches to monetization and platform expansion.'],
+            "outro": "We dive deep into the nuances of entrepreneurship, content creation, and starting a business from scratch. Whether you're an experienced business owner or contemplating starting a side hustle, there's something valuable for everyone in this episode. Don't miss the chance to learn from Colton Sakamoto’s journey and insights to elevate your own path to success. Enjoy the episode!"
+          }
+          "
+          --------
+          Send the result in the following JSON structure:
+          "
+          { "intro": "..",
+            "key_discussion_points": [],
+            "outro": ".."}`,
+        },
+      ],
+    })
+    .then((result) => {
+      generatedDescription = result.data.choices[0].message.content;
+      console.log(generatedDescription);
+    });
+  return generatedDescription;
 };
 const openai = new OpenAIApi(configuration);
 router.post("/", async (req, res) => {
-  const response = await summarizeTranscript(req.body);
-  res.json(response);
+  const summary = await summarizeTranscript(req.body);
+  const generatedTitle = await getTitles(summary);
+  const generatedTags = await getTags(summary);
+  const generatedHooks = await getHooks(generatedTitle);
+  const generatedDescription = await getDescription(summary);
+  res.json({
+    titles: generatedTitle,
+    tags: generatedTags,
+    hooks: generatedHooks,
+    description: generatedDescription,
+  });
 });
 
 export default router;

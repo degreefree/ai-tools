@@ -1,6 +1,12 @@
 import React from "react";
 import { AiFillCopy } from "react-icons/ai";
-function PodcastResults({ title, description, tags, thumbnailHooks }) {
+function PodcastResults({
+  title,
+  description,
+  tags,
+  thumbnailHooks,
+  epNumber,
+}) {
   const copyContent = async (target) => {
     try {
       await navigator.clipboard.writeText(target);
@@ -18,9 +24,9 @@ function PodcastResults({ title, description, tags, thumbnailHooks }) {
         </h3>{" "}
         <div className="flex justify-center items-center">
           <ul>
-            {title.map((title, index) => (
+            {title.titles.map((title, index) => (
               <li key={index} className="flex p-1 items-center justify-center">
-                • {title}{" "}
+                • {title} (DF#{epNumber})
                 <AiFillCopy
                   className="min-h-full h-10 w-10"
                   onClick={() => copyContent(title)}
@@ -48,12 +54,6 @@ function PodcastResults({ title, description, tags, thumbnailHooks }) {
               <br />
               {description.outro}
             </div>
-            <div>
-              <AiFillCopy
-                className="h-10 w-10"
-                onClick={() => copyContent(description)}
-              />
-            </div>
           </div>
         </div>
       </div>
@@ -79,7 +79,7 @@ function PodcastResults({ title, description, tags, thumbnailHooks }) {
         </h3>{" "}
         <div className="flex justify-center items-center">
           <ul>
-            {thumbnailHooks.map((hook, index) => (
+            {thumbnailHooks.hooks.map((hook, index) => (
               <li key={index} className="flex p-1 items-center justify-center">
                 • {hook}{" "}
                 <AiFillCopy

@@ -1,13 +1,6 @@
 import React from "react";
 import { AiFillCopy } from "react-icons/ai";
-function PodcastResults({
-  title,
-  description,
-  tags,
-  thumbnailHooks,
-  epNumber,
-  url,
-}) {
+function PodcastResults({ title, tags, thumbnailHooks, epNumber, url }) {
   const copyContent = async (target) => {
     try {
       await navigator.clipboard.writeText(target);
@@ -46,12 +39,6 @@ function PodcastResults({
             <div>
               Taken from DF#{epNumber}: <br />
               <a href={url}>{url} </a>
-            </div>
-            <div>
-              <AiFillCopy
-                className="h-10 w-10"
-                onClick={() => copyContent(description)}
-              />
             </div>
           </div>
         </div>
